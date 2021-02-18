@@ -1,9 +1,11 @@
 version: "3.8"
 services:
-  mongo:
-    image: mongo
+  mysql:
+    image: mysql
     ports:
-      - "27017:27017"
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
   solr:
     image: solr
     ports:
