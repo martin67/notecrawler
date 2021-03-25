@@ -11,6 +11,6 @@ services:
     ports:
       - "8983:8983"
   tomcat:
-    image: tomcat
+    build: .
     ports:
       - "8888:8080"
