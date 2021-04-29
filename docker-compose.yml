@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
   solr:
-    image: solr
+    build: src/main/resources/solr
     ports:
       - "8983:8983"
   tomcat:
