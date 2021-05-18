@@ -7,13 +7,24 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
 
 @Service
 public class BasicCrawlController {
-    CrawlConfig crawlConfig = new CrawlConfig();
+    final NoteCrawlerRepository noteCrawlerRepository;
 
-    public BasicCrawlController() throws Exception {
+    CrawlConfig crawlConfig = new CrawlConfig();
+    CrawlController controller;
+    CrawlController.WebCrawlerFactory<BasicCrawler> factory;
+
+    // Number of threads to use during crawling. Increasing this typically makes crawling faster. But crawling
+    // speed depends on many other factors as well. You can experiment with this to figure out what number of
+    // threads works best for you.
+    int numberOfCrawlers = 8;
+
+    public BasicCrawlController(NoteCrawlerRepository noteCrawlerRepository) throws Exception {
 
         // Set the folder where intermediate crawl data is stored (e.g. list of urls that are extracted from previously
         // fetched pages and need to be crawled later).
@@ -56,28 +67,27 @@ public class BasicCrawlController {
         PageFetcher pageFetcher = new PageFetcher(crawlConfig);
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-        CrawlController controller = new CrawlController(crawlConfig, pageFetcher, robotstxtServer);
+        controller = new CrawlController(crawlConfig, pageFetcher, robotstxtServer);
 
         // For each crawl, you need to add some seed urls. These are the first
         // URLs that are fetched and then the crawler starts following links
         // which are found in these pages
         controller.addSeed("https://michaelkravchuk.com/free-sheet-music/");
 
-        // Number of threads to use during crawling. Increasing this typically makes crawling faster. But crawling
-        // speed depends on many other factors as well. You can experiment with this to figure out what number of
-        // threads works best for you.
-        int numberOfCrawlers = 8;
 
         // To demonstrate an example of how you can pass objects to crawlers, we use an AtomicInteger that crawlers
         // increment whenever they see a url which points to an image.
         AtomicInteger numSeenImages = new AtomicInteger();
 
         // The factory which creates instances of crawlers.
-        CrawlController.WebCrawlerFactory<BasicCrawler> factory = () -> new BasicCrawler(numSeenImages);
+        factory = () -> new BasicCrawler(numSeenImages, noteCrawlerRepository);
 
+        this.noteCrawlerRepository = noteCrawlerRepository;
+    }
+
+    public void start() {
         // Start the crawl. This is a blocking operation, meaning that your code
         // will reach the line after this only when crawling is finished.
         controller.start(factory, numberOfCrawlers);
     }
-
 }

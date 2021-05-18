@@ -12,6 +12,7 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerDocument;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
 
@@ -21,8 +22,7 @@ public class BasicCrawler extends WebCrawler {
 
     private final AtomicInteger numSeenImages;
 
-    @Autowired
-    private NoteCrawlerRepository noteCrawlerRepository;
+    private final NoteCrawlerRepository noteCrawlerRepository;
 
     /**
      * Creates a new crawler instance.
@@ -31,8 +31,9 @@ public class BasicCrawler extends WebCrawler {
      *                      example, we pass an AtomicInteger to all crawlers and they increment it whenever they see a url which points
      *                      to an image.
      */
-    public BasicCrawler(AtomicInteger numSeenImages) {
+    public BasicCrawler(AtomicInteger numSeenImages, NoteCrawlerRepository noteCrawlerRepository) {
         this.numSeenImages = numSeenImages;
+        this.noteCrawlerRepository = noteCrawlerRepository;
     }
 
     /**
@@ -73,7 +74,6 @@ public class BasicCrawler extends WebCrawler {
         logger.debug("Path: '{}'", path);
         logger.debug("Parent page: {}", parentUrl);
         logger.debug("Anchor text: {}", anchor);
-
 
 
         if (page.getParseData() instanceof HtmlParseData) {
