@@ -90,4 +90,8 @@ public class BasicCrawlController {
         // will reach the line after this only when crawling is finished.
         controller.start(factory, numberOfCrawlers);
     }
+
+    public void shutdown() {
+        controller.shutdown();
+    }
 }

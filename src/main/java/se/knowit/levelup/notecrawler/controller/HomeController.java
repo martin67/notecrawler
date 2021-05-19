@@ -36,6 +36,7 @@ public class HomeController {
     @PostMapping(value = "/", params = "stop")
     public String stop(@ModelAttribute("searchForm") SearchForm searchForm) {
         log.info("Stopping crawler");
+        basicCrawlController.shutdown();
         return "index";
     }
 }
