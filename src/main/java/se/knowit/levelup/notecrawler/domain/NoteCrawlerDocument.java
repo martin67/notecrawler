@@ -4,30 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.SolrDocument;
 
-@SolrDocument(collection = "notecrawler")
+//@SolrDocument(collection = "notecrawler")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoteCrawlerDocument {
     @Id
-    @Indexed(name = "pdfLink", type = "string", required = true)
+//    @Indexed(name = "pdfLink", type = "string", required = true)
     private String pdfLink;
 
-    @Indexed(name = "composer", type = "text_general")
+//    @Indexed(name = "composer", type = "text_general")
     private String composer;
 
-    @Indexed(name = "title", type = "text_general")
+//    @Indexed(name = "title", type = "text_general")
     private String title;
 
-    @Indexed(name = "instrument", type = "text_general")
+//    @Indexed(name = "instrument", type = "text_general")
     private String instrument;
 
-    @Indexed(name = "key", type = "text_general")
+//    @Indexed(name = "key", type = "text_general")
     private String key;
 
-    @Indexed(name = "freeText", type = "text_general")
+//    @Indexed(name = "freeText", type = "text_general")
     private String freeText;
 }

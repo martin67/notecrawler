@@ -1,20 +1,16 @@
 package se.knowit.levelup.notecrawler;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
 
 @Service
 public class BasicCrawlController {
-    final NoteCrawlerRepository noteCrawlerRepository;
     boolean started;
 
     CrawlConfig crawlConfig = new CrawlConfig();
@@ -26,7 +22,7 @@ public class BasicCrawlController {
     // threads works best for you.
     int numberOfCrawlers = 8;
 
-    public BasicCrawlController(NoteCrawlerRepository noteCrawlerRepository) throws Exception {
+    public BasicCrawlController() throws Exception {
 
         // Set the folder where intermediate crawl data is stored (e.g. list of urls that are extracted from previously
         // fetched pages and need to be crawled later).
@@ -77,9 +73,8 @@ public class BasicCrawlController {
         AtomicInteger numSeenImages = new AtomicInteger();
 
         // The factory which creates instances of crawlers.
-        factory = () -> new BasicCrawler(numSeenImages, noteCrawlerRepository);
+        factory = () -> new BasicCrawler(numSeenImages);
 
-        this.noteCrawlerRepository = noteCrawlerRepository;
     }
 
     public void setSeed(String seedUrl) {

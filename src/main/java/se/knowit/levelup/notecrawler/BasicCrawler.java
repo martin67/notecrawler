@@ -5,25 +5,21 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import org.apache.http.Header;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerDocument;
-import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.PublishResponse;
 import software.amazon.awssdk.services.sns.model.SnsException;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
 
 public class BasicCrawler extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
 
     private final AtomicInteger numSeenImages;
-
-    private final NoteCrawlerRepository noteCrawlerRepository;
 
     /**
      * Creates a new crawler instance.
@@ -32,9 +28,8 @@ public class BasicCrawler extends WebCrawler {
      *                      example, we pass an AtomicInteger to all crawlers and they increment it whenever they see a url which points
      *                      to an image.
      */
-    public BasicCrawler(AtomicInteger numSeenImages, NoteCrawlerRepository noteCrawlerRepository) {
+    public BasicCrawler(AtomicInteger numSeenImages) {
         this.numSeenImages = numSeenImages;
-        this.noteCrawlerRepository = noteCrawlerRepository;
     }
 
     /**
