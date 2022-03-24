@@ -32,6 +32,7 @@ dependencies {
     implementation 'com.sleepycat:je:18.3.12'
     implementation platform('software.amazon.awssdk:bom:2.15.0')
     implementation 'software.amazon.awssdk:sns'
+    implementation 'software.amazon.awssdk:sqs'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

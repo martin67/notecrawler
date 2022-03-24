@@ -69,11 +69,6 @@ public class BasicCrawlController {
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
         controller = new CrawlController(crawlConfig, pageFetcher, robotstxtServer);
 
-        // For each crawl, you need to add some seed urls. These are the first
-        // URLs that are fetched and then the crawler starts following links
-        // which are found in these pages
-        controller.addSeed("https://michaelkravchuk.com/free-sheet-music/");
-
 
         // To demonstrate an example of how you can pass objects to crawlers, we use an AtomicInteger that crawlers
         // increment whenever they see a url which points to an image.
@@ -83,6 +78,14 @@ public class BasicCrawlController {
         factory = () -> new BasicCrawler(numSeenImages, noteCrawlerRepository);
 
         this.noteCrawlerRepository = noteCrawlerRepository;
+    }
+
+    public void setSeed(String seedUrl) {
+        // For each crawl, you need to add some seed urls. These are the first
+        // URLs that are fetched and then the crawler starts following links
+        // which are found in these pages
+        //https://michaelkravchuk.com/free-sheet-music/
+        controller.addSeed(seedUrl);
     }
 
     public void start() {
