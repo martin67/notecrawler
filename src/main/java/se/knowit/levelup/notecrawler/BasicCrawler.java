@@ -88,7 +88,7 @@ public class BasicCrawler extends WebCrawler {
                         NoteCrawlerDocument noteCrawlerDocument = new NoteCrawlerDocument();
                         noteCrawlerDocument.setFreeText(text);
                         noteCrawlerDocument.setPdfLink(weburl.getURL());
-                        noteCrawlerRepository.save(noteCrawlerDocument);
+                        //noteCrawlerRepository.save(noteCrawlerDocument);
 
                         try {
                             PublishRequest request = PublishRequest.builder()
