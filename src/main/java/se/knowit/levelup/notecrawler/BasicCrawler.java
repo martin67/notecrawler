@@ -1,20 +1,21 @@
 package se.knowit.levelup.notecrawler;
 
 
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
-
-import org.apache.http.Header;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.apache.http.Header;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerDocument;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
+import software.amazon.awssdk.services.sns.model.SnsException;
+
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 public class BasicCrawler extends WebCrawler {
 
@@ -88,6 +89,20 @@ public class BasicCrawler extends WebCrawler {
                         noteCrawlerDocument.setFreeText(text);
                         noteCrawlerDocument.setPdfLink(weburl.getURL());
                         noteCrawlerRepository.save(noteCrawlerDocument);
+
+                        try {
+                            PublishRequest request = PublishRequest.builder()
+                                    .message(weburl.getURL())
+                                    .topicArn("arn:aws:sns:eu-north-1:838808947613:newPdf")
+                                    .build();
+                            SnsClient snsClient = SnsClient.create();
+                            PublishResponse result = snsClient.publish(request);
+                            System.out.println(result.messageId() + " Message sent. Status is " + result.sdkHttpResponse().statusCode());
+
+                        } catch (SnsException e) {
+                            System.err.println(e.awsErrorDetails().errorMessage());
+                            System.exit(1);
+                        }
                     });
 
             logger.debug("Text length: {}", text.length());
