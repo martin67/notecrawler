@@ -8,12 +8,14 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import se.knowit.levelup.notecrawler.domain.NoteCrawlerRepository;
 
 @Service
 public class BasicCrawlController {
     final NoteCrawlerRepository noteCrawlerRepository;
+    boolean started;
 
     CrawlConfig crawlConfig = new CrawlConfig();
     CrawlController controller;
@@ -55,7 +57,7 @@ public class BasicCrawlController {
         // interrupted/crashed crawl). Note: if you enable resuming feature and
         // want to start a fresh crawl, you need to delete the contents of
         // rootFolder manually.
-        crawlConfig.setResumableCrawling(true);
+        crawlConfig.setResumableCrawling(false);
 
         // Set this to true if you want crawling to stop whenever an unexpected error
         // occurs. You'll probably want this set to true when you first start testing
@@ -88,10 +90,14 @@ public class BasicCrawlController {
         controller.addSeed(seedUrl);
     }
 
+    @Async
     public void start() {
         // Start the crawl. This is a blocking operation, meaning that your code
         // will reach the line after this only when crawling is finished.
-        controller.start(factory, numberOfCrawlers);
+        if (!started) {
+            started = true;
+            controller.start(factory, numberOfCrawlers);
+        }
     }
 
     public void shutdown() {
