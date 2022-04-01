@@ -1,5 +1,8 @@
 package se.knowit.levelup.notecrawler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,7 @@ public class SqsReceiver {
   }
 
   @Scheduled(fixedDelay = 5000)
-  void test() {
+  void test() throws JsonProcessingException {
     log.info("Starting test schedule");
     SqsClient sqsClient = SqsClient.create();
     ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder()
@@ -40,8 +43,16 @@ public class SqsReceiver {
     List<Message> messages = sqsClient.receiveMessage(receiveMessageRequest).messages();
 
     for (Message message : messages) {
-      log.info("Setting seed {}", message.body());
-      basicCrawlController.setSeed(message.body());
+      String body = message.body();
+      log.info("Message body {}",message.body());
+      ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      CrawlerMessage crawlerMessage = objectMapper.readValue(body, CrawlerMessage.class);
+      String jsonMessage = crawlerMessage.getMessage();
+
+      se.knowit.levelup.notecrawler.Message message1 = objectMapper.readValue(jsonMessage, se.knowit.levelup.notecrawler.Message.class);
+      log.info("Message received {}", message1);
+      log.info("Setting seed {}", message1.getUrl());
+      basicCrawlController.setSeed(message1.getUrl());
       sqsClient.deleteMessage(DeleteMessageRequest.builder().receiptHandle(message
               .receiptHandle()).queueUrl("https://sqs.eu-north-1.amazonaws.com/838808947613/newUrlQueue").build());
     }
